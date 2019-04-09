@@ -1,0 +1,15 @@
+code files are:
+TAS.cpp
+TTAS.cpp
+Backoff.cpp
+
+runTAS.sh:
+This script run the code and save the output in the file by changing the number of threads.
+similary runTTAS.sh, runBackoff.sh
+
+TAS_output:
+This directory contain the output file which got by running the corresponding scripts for each algo.
+
+
+To run the script:
+bash <script name>
