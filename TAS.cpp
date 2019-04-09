@@ -5,6 +5,7 @@
 #include <mutex>
 #include <sstream>
 #include <fstream>
+#include <random>
 
 using namespace std;
 
@@ -27,7 +28,14 @@ class TASLock{
 	}
 };
 
-void testCS(int id, int k, TASLock &testLock){
+void testCS(int id, int k, TASLock &testLock, int lmb1, int lmb2){
+	
+		
+	default_random_engine generator(1); // 1 is seed	
+	exponential_distribution<double> exp_dist1(1/lmb1);
+	exponential_distribution<double> exp_dist2(1/lmb2);	
+
+		
 	for(int i=0; i<k; i++){
 		// ---------- get the time
 		time_t rawtime;
@@ -44,13 +52,20 @@ void testCS(int id, int k, TASLock &testLock){
 		mtx.lock();
 		cout<<i+1<<" CS Entered by thread "<<id<<" at "<<asctime(timeinfo);
 		mtx.unlock();
-		sleep(1); // ------------change sleep to exp dist
+
+		// sleep
+		double num1 = exp_dist1(generator);
+		sleep(num1);
 		testLock.unlock();
 		
 		mtx.lock();
 		cout<<i+1<<" CS Exited by thread "<<id<<" at "<<asctime(timeinfo);
 		mtx.unlock();
-			
+		// sleep
+		double num2 = exp_dist2(generator);
+		sleep(num2);
+
+
 	}
 	return;
 }
@@ -92,7 +107,7 @@ int main(int argc, char const *argv[1]){
 	TASLock testLock;
 	thread thrdArr[N];
 	for(int i=0; i<N; i++){
-		thrdArr[i] = thread(testCS, i, k, ref(testLock));
+		thrdArr[i] = thread(testCS, i, k, ref(testLock), lmb1, lmb2);
 	}
 	
 	for(int i=0; i<N; i++){
